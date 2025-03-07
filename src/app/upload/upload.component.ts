@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Router } from '@angular/router';
 import { CommonModule } from '@angular/common';
@@ -10,17 +10,41 @@ import { CommonModule } from '@angular/common';
   styleUrls: ['./upload.component.css'],
   imports: [CommonModule],
 })
-export class UploadComponent {
+export class UploadComponent implements OnInit {
   selectedFile: File | null = null;
   loading: boolean = false;
   alertMessage: string = '';
   alertTitle: string = '';
   alertType: 'success' | 'error' = 'success';
+  fileData: any | undefined;
 
   constructor(private http: HttpClient, private router: Router) {}
 
+  ngOnInit(): void {
+    // Fetch all uploaded files when the component is initialized
+    this.getAllUploadedFiles();
+  }
+  onRowClick(file: any): void {
+    // Handle the row click event here. You can navigate to a different page or show more details.
+    console.log('Row clicked:', file._id);
+    this.router.navigate(['/file-info'], { state: { data_file: file } });  // Navigate to details page
+  }
+  
   onFileSelected(event: any): void {
     this.selectedFile = event.target.files[0];
+  }
+
+  getAllUploadedFiles(): void {
+    this.http.get<{ data: any[] }>('https://heirarchy-validation-api.onrender.com/api/upload/all').subscribe({
+      next: (response) => {
+        this.fileData = response; // Store the file data in the component
+        console.log(response);
+        console.log(this.fileData);
+      },
+      error: (error) => {
+        console.error('Error fetching files:', error);
+      },
+    });
   }
 
   onUpload(): void {
@@ -42,7 +66,7 @@ export class UploadComponent {
       error: (error) => {
         this.loading = false;
         console.error('Upload error:', error);
-        this.showAlert('Error', 'File upload failed! ' + (error.message || 'Unknown error'), 'error');
+        this.showAlert('Error', 'File upload failed! ' + (error.response ||  error.status), 'error');
       },
     });
   }

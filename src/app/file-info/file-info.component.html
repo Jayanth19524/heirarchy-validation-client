@@ -1,0 +1,65 @@
+<div class="container mt-5" *ngIf="data">
+    <div class="card shadow-lg p-4">
+        <!-- Back to Upload Button -->
+        <div class="d-flex justify-content-start mb-3">
+            <button class="btn custom-btn" (click)="goBack()">⬅ Back to Upload</button>
+        </div>
+
+        <!-- File ID as Heading -->
+        <h1 class="text-center text-info mt-3">File ID: {{ fileId }}</h1>
+        
+        <!-- Validation Errors Section -->
+        <h2 class="text-danger text-center fw-bold">Validation Errors</h2>
+        <div *ngIf="data.validationErrors?.length > 0" class="table-responsive">
+            <table class="table custom-glass-table">
+                <thead class="table-danger">
+                    <tr>
+                        <th class="p-3">Email</th>
+                        <th class="p-3">Errors</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr *ngFor="let error of data.validationErrors">
+                        <td class="fw-bold">{{ error.row.Email }}</td>
+                        <td>
+                            <ul class="error-list">
+                                <li *ngFor="let err of error.errors" class="text-danger">{{ err }}</li>
+                            </ul>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+        <div *ngIf="data.validationErrors?.length === 0" class="alert alert-success text-center">
+            <p class="fw-bold">✅ No validation errors found. All records are valid.</p>
+        </div>
+        
+        <!-- Processed Data Table -->
+        <h2 class="text-center text-primary fw-bold mt-4">Processed Data</h2>
+        <div class="table-responsive pb-5">
+            <table class="table custom-glass-table">
+                <thead class="table-dark text-uppercase text-light">
+                    <tr>
+                        <th class="p-3">Email</th>
+                        <th class="p-3">Full Name</th>
+                        <th class="p-3">Role</th>
+                        <th class="p-3">Reports To</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr *ngFor="let entry of data.validatedData" class="align-middle">
+                        <td class="fw-bold">{{ entry.Email }}</td>
+                        <td>{{ entry.FullName }}</td>
+                        <td class="text-primary fw-semibold">{{ entry.Role }}</td>
+                        <td class="text-muted">{{ entry.ReportsTo }}</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<!-- No Data Message -->
+<div class="alert alert-warning text-center mt-5" *ngIf="!data">
+    <p class="fw-bold">⚠ No data available. Please upload a file first.</p>
+</div>
